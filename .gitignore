@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/.venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+frontend/.env
+backend/.env
+*.local
+
+# Storage (generated content)
+backend/storage/uploads/*
+backend/storage/models/*
+backend/storage/posters/*
+backend/storage/jobs/*
+backend/storage/samples/*
+!backend/storage/uploads/.gitkeep
+!backend/storage/models/.gitkeep
+!backend/storage/posters/.gitkeep
+!backend/storage/jobs/.gitkeep
+!backend/storage/samples/.gitkeep
+
+# Build / IDE
+frontend/dist/
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+.Python
+
+# Logs and caches
+*.log
+npm-debug.log*
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# TRELLIS / Hugging Face
+TRELLIS.2/
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+*.pth
+.huggingface/
+
+# Local Netlify folder
+.netlify
+
+# Local asset duplicates
+*.webp-backup
+frontend/public/Screenshot*.png

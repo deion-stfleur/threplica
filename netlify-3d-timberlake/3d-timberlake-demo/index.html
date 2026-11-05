@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDP Mockup · 3D Product View</title>
+    <script
+      type="module"
+      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+    ></script>
+    <style>
+      :root {
+        --text: #111;
+        --muted: #6b6b6b;
+        --border: #e5e5e5;
+        --price: #c41230;
+        --stock: #1f7a3f;
+        --bg: #fff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .topbar {
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem 1.25rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        gap: 1.1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .topbar a:hover {
+        text-decoration: underline;
+      }
+
+      .crumb {
+        max-width: 1180px;
+        margin: 0.85rem auto 0;
+        padding: 0 1.25rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 1rem 1.25rem 3rem;
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1.15fr) minmax(280px, 0.85fr);
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      .thumbs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+
+      .thumb {
+        width: 72px;
+        height: 72px;
+        border: 1px solid var(--border);
+        background: #f7f7f7;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .thumb.active {
+        border-color: #111;
+      }
+
+      .thumb img,
+      .thumb span {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: grid;
+        place-items: center;
+        font-size: 0.65rem;
+        color: var(--muted);
+        text-align: center;
+        padding: 0.25rem;
+      }
+
+      .media {
+        position: relative;
+        border: 1px solid var(--border);
+        background: #fafafa;
+        min-height: 520px;
+      }
+
+      model-viewer {
+        width: 100%;
+        height: 520px;
+        background: #f5f5f5;
+      }
+
+      .media-photo {
+        width: 100%;
+        height: 520px;
+        object-fit: contain;
+        display: none;
+        background: #fff;
+      }
+
+      .media.show-photo model-viewer {
+        display: none;
+      }
+
+      .media.show-photo .media-photo {
+        display: block;
+      }
+
+      .media.show-photo .badge-3d {
+        display: none;
+      }
+
+      .badge-3d {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #111;
+        color: #fff;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.55rem;
+        letter-spacing: 0.04em;
+        z-index: 2;
+      }
+
+      .heart {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: #5b2d91;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .large-view {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        border: none;
+        background: #ececec;
+        border-radius: 999px;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .info h1 {
+        margin: 0.35rem 0 0.5rem;
+        font-size: 1.35rem;
+        line-height: 1.25;
+        font-weight: 700;
+      }
+
+      .stock {
+        color: var(--stock);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .stars {
+        color: #222;
+        font-size: 0.9rem;
+        margin: 0.35rem 0 0.75rem;
+      }
+
+      .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+      }
+
+      .price {
+        color: var(--price);
+        font-size: 1.7rem;
+        font-weight: 700;
+      }
+
+      .was {
+        color: var(--muted);
+        text-decoration: line-through;
+      }
+
+      .qty {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 0.85rem;
+      }
+
+      .qty button,
+      .qty span {
+        width: 42px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border: none;
+        background: #fff;
+        font-size: 1rem;
+      }
+
+      .qty button {
+        cursor: pointer;
+      }
+
+      .atc {
+        width: 100%;
+        background: #111;
+        color: #fff;
+        border: none;
+        min-height: 48px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+
+      .finance {
+        margin: 0.75rem 0 1rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .swatches {
+        display: flex;
+        gap: 0.45rem;
+        margin-top: 0.4rem;
+      }
+
+      .swatch {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #ccc;
+      }
+
+      .availability {
+        margin-top: 1.1rem;
+        padding-top: 0.9rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+
+      .availability strong {
+        color: var(--stock);
+      }
+
+      .demo-bar {
+        max-width: 1180px;
+        margin: 0 auto 0.5rem;
+        padding: 0.85rem 1.25rem;
+        background: #f4f6f6;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .demo-bar p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: #333;
+      }
+
+      .demo-bar label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .demo-bar input[type="file"] {
+        font-size: 0.82rem;
+      }
+
+      .features {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 1.25rem 3rem;
+      }
+
+      .features h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.5rem;
+      }
+
+      @media (max-width: 900px) {
+        .page {
+          grid-template-columns: 1fr;
+        }
+
+        .thumbs {
+          flex-direction: row;
+          overflow-x: auto;
+        }
+
+        model-viewer,
+        .media-photo,
+        .media {
+          min-height: 360px;
+          height: 360px;
+        }
+
+        model-viewer,
+        .media-photo {
+          height: 360px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar" aria-label="Main">
+      <a href="#">Mattresses</a>
+      <a href="#">Bedroom</a>
+      <a href="#">Living Room</a>
+      <a href="#">Dining</a>
+      <a href="#">Office</a>
+      <a href="#">Kids &amp; Teens</a>
+      <a href="#">Outdoor</a>
+      <a href="#">Rugs</a>
+      <a href="#">Lighting</a>
+      <a href="#">Home Decor</a>
+    </nav>
+
+    <div class="demo-bar">
+      <p>
+        <strong>PDP mockup</strong> — main image slot uses interactive 3D
+        (`model-viewer`). Load your generated `.glb` to preview.
+      </p>
+      <label>
+        Load GLB
+        <input id="glbInput" type="file" accept=".glb,model/gltf-binary" />
+      </label>
+    </div>
+
+    <p class="crumb">
+      Living Room &gt; Living Room Seating &gt; Sectionals &gt; Timberlake 2
+      Piece Sectional
+    </p>
+
+    <main class="page">
+      <aside class="thumbs" aria-label="Product views">
+        <button class="thumb active" type="button" data-view="3d" aria-label="3D view">
+          <span>3D<br />View</span>
+        </button>
+        <button class="thumb" type="button" data-view="photo" aria-label="Photo view">
+          <img src="./timberlake-photo.png" alt="Product photo thumbnail" />
+        </button>
+        <button class="thumb" type="button" data-view="photo" aria-label="Detail view">
+          <img src="./timberlake-photo.png" alt="Detail thumbnail" />
+        </button>
+      </aside>
+
+      <section class="media" id="mediaStage" aria-label="Product media">
+        <span class="badge-3d">360° 3D</span>
+        <button class="heart" type="button" aria-label="Save">♥</button>
+        <model-viewer
+          id="viewer"
+          src="./chair.glb?v=png1"
+          alt="Interactive 3D product model"
+          camera-controls
+          touch-action="pan-y"
+          shadow-intensity="1"
+          shadow-softness="0.8"
+          exposure="1"
+          tone-mapping="neutral"
+          environment-image="neutral"
+          auto-rotate
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          ar-scale="auto"
+          xr-environment
+        ></model-viewer>
+        <img
+          class="media-photo"
+          src="./timberlake-photo.png"
+          alt="Timberlake 2 Piece Sectional product photo"
+        />
+        <button class="large-view" type="button" id="fullscreenBtn">
+          ⌕ Large View
+        </button>
+      </section>
+
+      <section class="info">
+        <p class="stock">✓ In stock</p>
+        <h1>
+          Timberlake 2 Piece Sectional - Soft Textured Polyester Fabric - Wide
+          Track Arms - Two Coordinating Toss Pillows - Left-Facing Chaise
+        </h1>
+        <p class="stars">★★★★★ <span style="color: #666">(155)</span></p>
+
+        <div class="price-row">
+          <span class="price">$999.00</span>
+          <span class="was">$1,149.00</span>
+        </div>
+
+        <div class="qty" aria-label="Quantity">
+          <button type="button" id="qtyMinus">−</button>
+          <span id="qtyValue">1</span>
+          <button type="button" id="qtyPlus">+</button>
+        </div>
+
+        <button class="atc" type="button">ADD TO CART</button>
+        <p class="finance">$17/month with 60 payments at 0% APR*</p>
+
+        <p style="font-size: 0.9rem; margin: 0 0 0.35rem">
+          <a href="#">Make a Virtual Appointment</a>
+        </p>
+
+        <p style="font-size: 0.9rem; margin: 0.85rem 0 0">Material: Stone</p>
+        <div class="swatches" aria-label="Material options">
+          <span class="swatch" style="background: #d8d0c4"></span>
+          <span class="swatch" style="background: #c45b3c"></span>
+          <span class="swatch" style="background: #1f2a44"></span>
+        </div>
+
+        <div class="availability">
+          Product Availability<br />
+          <strong>● In-Stock &amp; ready to go!</strong>
+        </div>
+      </section>
+    </main>
+
+    <section class="features">
+      <h2>Product Features</h2>
+      <p style="color: var(--muted); max-width: 40rem; line-height: 1.5">
+        This mockup shows how a generated GLB could replace the main PDP image.
+        Shoppers can rotate and inspect the product in 3D without leaving the
+        page.
+      </p>
+    </section>
+
+    <script>
+      const viewer = document.getElementById("viewer");
+      const mediaStage = document.getElementById("mediaStage");
+      const glbInput = document.getElementById("glbInput");
+      const qtyValue = document.getElementById("qtyValue");
+      let objectUrl = null;
+      let qty = 1;
+
+      document.querySelectorAll(".thumb").forEach((thumb) => {
+        thumb.addEventListener("click", () => {
+          document
+            .querySelectorAll(".thumb")
+            .forEach((t) => t.classList.remove("active"));
+          thumb.classList.add("active");
+          if (thumb.dataset.view === "photo") {
+            mediaStage.classList.add("show-photo");
+          } else {
+            mediaStage.classList.remove("show-photo");
+          }
+        });
+      });
+
+      glbInput.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = URL.createObjectURL(file);
+        viewer.src = objectUrl;
+        mediaStage.classList.remove("show-photo");
+        document
+          .querySelectorAll(".thumb")
+          .forEach((t) => t.classList.remove("active"));
+        document.querySelector('.thumb[data-view="3d"]').classList.add("active");
+      });
+
+      document.getElementById("qtyMinus").addEventListener("click", () => {
+        qty = Math.max(1, qty - 1);
+        qtyValue.textContent = String(qty);
+      });
+
+      document.getElementById("qtyPlus").addEventListener("click", () => {
+        qty += 1;
+        qtyValue.textContent = String(qty);
+      });
+
+      document.getElementById("fullscreenBtn").addEventListener("click", () => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen?.();
+        } else {
+          mediaStage.requestFullscreen?.();
+        }
+      });
+    </script>
+  </body>
+</html>

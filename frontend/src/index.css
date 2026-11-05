@@ -1,0 +1,68 @@
+:root {
+  --background: #f4f6f6;
+  --surface: #ffffff;
+  --surface-muted: #eef1f1;
+  --text-primary: #1c2527;
+  --text-secondary: #5d6a6d;
+  --border: #d7dede;
+  --accent: #4a5f64;
+  --accent-hover: #384a4e;
+  --danger: #b42318;
+  --success: #257a4b;
+  --radius-small: 8px;
+  --radius-medium: 14px;
+  --radius-large: 20px;
+  --shadow-card: 0 8px 30px rgba(22, 34, 37, 0.08);
+  --focus-ring: 0 0 0 3px rgba(74, 95, 100, 0.28);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-primary);
+  background-color: var(--background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
